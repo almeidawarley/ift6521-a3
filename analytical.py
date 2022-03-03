@@ -19,6 +19,13 @@ class Analytical:
         for k in reversed(range(0, self.instance.N)):
 
             self.S(k)
+
+        payload = ''
+
+        for k in range(0, self.instance.N):
+            payload += 'S[{}] = {}; '.format(k, self.computed_S[k])
+
+        print(payload)
         
         def u(k, x):
             return max(self.computed_S[k] - x, 0)
@@ -34,8 +41,8 @@ class Analytical:
 
             # Bisection method to find interval
 
-            a = -self.instance.N * self.instance.u
-            b = + self.instance.N * self.instance.u
+            a = -self.instance.peak
+            b = + self.instance.peak
             c = int(round((b + a) / 2))
 
             while b - a > interval:

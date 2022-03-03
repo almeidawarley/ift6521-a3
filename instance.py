@@ -16,6 +16,8 @@ class Instance:
         self.avg_p = round(st.mean(self.p), 2)
         self.avg_h = round(st.mean(self.h), 2)
 
+        self.peak = self.N * self.u
+
     def format_row(self, content):
         
         entries = []
