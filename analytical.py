@@ -25,7 +25,7 @@ class Analytical:
         for k in range(0, self.instance.N):
             payload += 'S[{}] = {}; '.format(k, self.computed_S[k])
 
-        print(payload)
+        # print(payload)
         
         def u(k, x):
             return max(self.computed_S[k] - x, 0)
@@ -92,7 +92,7 @@ class Analytical:
 
             for w in range(self.instance.l, self.instance.u + 1):
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
-                payload += probability * self.instance.r(y - w)
+                payload += probability * self.instance.r(k, y - w)
                 payload += probability * self.J(k + 1, y - w)
             
             payload = round(payload, 2)

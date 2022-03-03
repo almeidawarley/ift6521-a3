@@ -37,7 +37,7 @@ class Instance:
 
         return payload
 
-    def r(self, x):
+    def r(self, k, x):
 
         return self.avg_p * max(0, -1 * x) + self.avg_h * max(0, x)
 
