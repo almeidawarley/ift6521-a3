@@ -1,21 +1,24 @@
 from inspect import BoundArguments
 import instance as it
 import analytical as an
+import backward as bc
 import random as rd
 
-bound = 100
-sim_number = 10
+sim_number = 5
 
 problem = it.Instance('small.txt')
 
-solver = an.Analytical(problem)
+solver1 = an.Analytical(problem)
+solver2 = bc.Backward(problem)
 
-policy = solver.run()
+policy1 = solver1.run()
+policy2 = solver2.run()
 
 for k in range(0, problem.N):
 
-    sim_counter = 1
-    while sim_counter <= sim_number:
-        x = rd.randint(-1 * bound, bound)
-        print('Optimal policy for an inventory at level {} in stage {} -> order {} units'.format(x, k, policy(k, x)))
-        sim_counter = sim_counter + 1
+    for x in range(-problem.peak, problem.peak):
+        print('# Stage {}, state {}'.format(k, x))
+        print('\tOptimal (analytical) policy for an inventory at level {} in stage {} -> order {} units'.format(x, k, policy1(k, x)))
+        print('\tOptimal (backward) policy for an inventory at level {} in stage {} -> order {} units'.format(x, k, policy2(k, x)))
+
+        _ = input('Press enter to move forward...')
