@@ -25,7 +25,7 @@ class Analytical:
         for k in range(0, self.instance.N):
             payload += 'S[{}] = {}; '.format(k, self.computed_S[k])
 
-        # print(payload)
+        print('Analytical form: {}'.format(payload))
         
         def u(k, x):
             return max(self.computed_S[k] - x, 0)
@@ -88,7 +88,7 @@ class Analytical:
 
         except:
 
-            payload = self.instance.d(y)
+            payload = self.instance.d(k, y)
 
             for w in range(self.instance.l, self.instance.u + 1):
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
@@ -117,7 +117,7 @@ class Analytical:
             payload = 0
 
             if k < self.instance.N:
-                payload = self.G(k, x + max(0, self.computed_S[k] - x)) - self.instance.d(x)
+                payload = self.G(k, x + max(0, self.computed_S[k] - x)) - self.instance.d(k, x)
             
             # print('> Computed J_{}({}) = {}'.format(k, x, payload))
 

@@ -35,7 +35,7 @@ class Backward:
 
         except:
 
-            payload = self.instance.d(y)
+            payload = self.instance.d(k, y)
 
             for w in range(self.instance.l, self.instance.u + 1):
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
@@ -62,11 +62,11 @@ class Backward:
         except:
 
             min_u = 0
-            min_J = self.G(k, x + min_u) - self.instance.d(x)
+            min_J = self.G(k, x + min_u) - self.instance.d(k, x)
 
-            for u in range(1, self.instance.peak):
+            for u in range(1, 2 * self.instance.peak):
 
-                j = self.G(k, x + u) - self.instance.d(x)
+                j = self.G(k, x + u) - self.instance.d(k, x)
 
                 if min_J > j:
                     min_u = u
