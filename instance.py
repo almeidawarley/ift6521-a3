@@ -2,7 +2,7 @@ import statistics as st
 
 class Instance:
 
-    def __init__(self, path):
+    def __init__(self, path, switch = True):
 
         with open(path) as content:
             self.N = int(content.readline())
@@ -16,6 +16,8 @@ class Instance:
         self.avg_p = round(st.mean(self.p), 2)
         self.avg_h = round(st.mean(self.h), 2)
 
+        self.switch = switch
+
         self.peak = self.N * self.u
 
     def format_row(self, content):
@@ -24,6 +26,10 @@ class Instance:
         for entry in content.readline().split():
             entries.append(float(entry))
         return entries
+
+    def flip(self):
+
+        self.switch = not self.switch
 
     def __str__(self):
 
@@ -41,10 +47,6 @@ class Instance:
 
         return self.avg_p * max(0, -1 * x) + self.avg_h * max(0, x)
 
-    # def r(self, k, x):
-
-    #    return self.p[k] * max(0, -1 * x) + self.h[k] * max(0, x)
-
-    def d(self, x):
+    def d(self, k, x):
 
         return self.avg_c * x
