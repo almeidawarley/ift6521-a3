@@ -2,9 +2,9 @@ import math as mt
 
 class Analytical:
 
-    def __init__(self, i):
+    def __init__(self, problem):
 
-        self.instance = i
+        self.instance = problem
 
         self.computed_S = {}
         self.computed_G = {}
@@ -28,7 +28,7 @@ class Analytical:
         print('Analytical form: {}'.format(payload))
         
         def u(k, x):
-            return max(self.computed_S[k] - x, 0)
+            return max(self.computed_S[k] - x, -1 * self.instance.e)
         
         return u
 
@@ -88,7 +88,7 @@ class Analytical:
 
         except:
 
-            payload = self.instance.d(k, y)
+            payload = self.instance.t(k, y)
 
             for w in range(self.instance.l, self.instance.u + 1):
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
@@ -117,7 +117,7 @@ class Analytical:
             payload = 0
 
             if k < self.instance.N:
-                payload = self.G(k, x + max(0, self.computed_S[k] - x)) - self.instance.d(k, x)
+                payload = self.G(k, x + max(-1 * self.instance.e, self.computed_S[k] - x)) - self.instance.t(k, x)
             
             # print('> Computed J_{}({}) = {}'.format(k, x, payload))
 

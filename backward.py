@@ -2,9 +2,9 @@ import math as mt
 
 class Backward:
 
-    def __init__(self, i):
+    def __init__(self, problem):
 
-        self.instance = i
+        self.instance = problem
 
         self.computed_G = {}
         self.computed_J = {}
@@ -35,7 +35,7 @@ class Backward:
 
         except:
 
-            payload = self.instance.d(k, y)
+            payload = self.instance.t(k, y)
 
             for w in range(self.instance.l, self.instance.u + 1):
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
@@ -61,20 +61,20 @@ class Backward:
 
         except:
 
-            min_u = 0
-            min_J = self.G(k, x + min_u) - self.instance.d(k, x)
+            min_y = x - self.instance.e
+            min_J = self.G(k, min_y) # - self.instance.t(k, x)
 
-            for u in range(1, 2 * self.instance.peak):
+            for y in range(x - self.instance.e + 1, self.instance.peak):
 
-                j = self.G(k, x + u) - self.instance.d(k, x)
+                J = self.G(k, y) # - self.instance.t(k, x)
 
-                if min_J > j:
-                    min_u = u
-                    min_J = j
-
+                if min_J > J:
+                    min_y = y
+                    min_J = J
+                    
             # print('> Computed J_{}({})'.format(k, x))
 
-            self.computed_J[k][x] = min_J
-            self.computed_u[k][x] = min_u
+            self.computed_J[k][x] = min_J - self.instance.t(k, x)
+            self.computed_u[k][x] = min_y - x
 
         return self.computed_J[k][x]

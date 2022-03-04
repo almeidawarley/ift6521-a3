@@ -7,32 +7,23 @@ class Instance:
         # Open file with instance information
         with open(path) as content:
             
-            # Store N, l, u, c_k, p_k, h_k
+            # Store N, l, u, c, p, h, d
             self.N = int(content.readline())
             self.l = int(content.readline())
             self.u = int(content.readline())
-            self.c = self.format_row(content)
-            self.p = self.format_row(content)
-            self.h = self.format_row(content)
+            self.c = int(content.readline())
+            self.p = int(content.readline())
+            self.h = int(content.readline())
+            self.e = int(content.readline())
 
-        # Compute average c, p, h over stages
-        self.avg_c = round(st.mean(self.c), 2)
-        self.avg_p = round(st.mean(self.p), 2)
-        self.avg_h = round(st.mean(self.h), 2)
+            # Some sort of cost to dispose items
+            # self.d = int(content.readline())
 
         # Start switch to modify instance
         self.switch = switch
 
         # Store maximum inventory level
         self.peak = self.N * self.u
-
-    def format_row(self, content):
-
-        # Format row from file as a list        
-        entries = []
-        for entry in content.readline().split():
-            entries.append(float(entry))
-        return entries
 
     def flip(self):
 
@@ -45,9 +36,9 @@ class Instance:
         payload = '# -----------------------------------------------\n'
         payload += '\tMaximum number of stages (N): {}\n'.format(self.N)
         payload += '\tUniform distribution: U({}, {})\n'.format(self.l, self.u)
-        payload += '\tUnit ordering costs (c): {}\n'.format(self.avg_c)
-        payload += '\tUnit shortage costs (p): {}\n'.format(self.avg_p)
-        payload += '\tUnit storage costs (h): {}\n'.format(self.avg_h)
+        payload += '\tUnit ordering costs (c): {}\n'.format(self.c)
+        payload += '\tUnit shortage costs (p): {}\n'.format(self.p)
+        payload += '\tUnit storage costs (h): {}\n'.format(self.h)
         payload += '# -----------------------------------------------'
 
         return payload
@@ -55,9 +46,11 @@ class Instance:
     def r(self, k, x):
 
         # Compute cost of inventory level x at stage k
-        return self.avg_p * max(0, -1 * x) + self.avg_h * max(0, x)
+        return self.p * max(0, -1 * x) + self.h * max(0, x)
+        # return self.p[k] * max(0, -1 * x) + self.h[k] * max(0, x)
 
-    def d(self, k, u):
+    def t(self, k, u):
         
         # Compute cost of ordering u units at stage k
-        return self.avg_c * u
+        return self.c * u
+        # return self.c[k] * u
