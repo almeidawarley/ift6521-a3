@@ -4,6 +4,8 @@ class Instance:
 
     def __init__(self, path, switch = True):
 
+        print('Reading instance information from file: {}'.format(path))
+
         # Open file with instance information
         with open(path) as content:
             
@@ -16,8 +18,10 @@ class Instance:
             self.h = int(content.readline())
             self.e = int(content.readline())
 
-        # Store reasonable inventory level
+        # Store reasonable inventory peak
         self.peak = self.N * self.u
+
+        print(self)
 
     def __str__(self):
 
