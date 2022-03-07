@@ -44,6 +44,8 @@ class Instance:
             payload += '\tWorking with modified version\n'
             payload += '\tFrontier for changing: {}\n'.format(self.frontier)
             payload += '\tUnit ordering costs (d): {}\n'.format(self.d)
+        else:
+            payload += '\tWorking with standard version\n'
         payload += '# -----------------------------------------------'
 
         return payload

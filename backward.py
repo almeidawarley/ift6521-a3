@@ -4,51 +4,59 @@ class Backward:
 
     def __init__(self, problem):
 
+        # Store instance object
         self.instance = problem
 
-        self.computed_G = {}
+        # Create memory for H, J, u
+        self.computed_H = {}
         self.computed_J = {}
         self.computed_u = {}
-        
+
+        # Start memory as empty        
         for k in range(0, self.instance.N):
-            self.computed_G[k] = {}
+            self.computed_H[k] = {}
             self.computed_J[k] = {}
             self.computed_u[k] = {}
 
     def run(self):
 
+        # Run backward chaining algorithm
         for k in reversed(range(0, self.instance.N)):
-            for x in range(-1 * self.instance.peak, self.instance.peak + 1):
-                
+            for x in range(-1 * self.instance.peak, self.instance.peak + 1):                
                 self.J(k, x)
 
+        # Create optimal policy function
         def u(k, x):
+            try:
+                self.computed_u[k][x]
+            except:
+                print('Optimal policy for inventory level {} at stage {} not calculated in the discretization'.format(x, k))
+                exit()
             return self.computed_u[k][x]
         
+        # Return optimal policy function
         return u
 
-
-    def G(self, k, y):
+    def H(self, k, y):
 
         try:
             self.computed_G[k][y]
 
         except:
 
-            payload = self.instance.t(k, y)
+            # Compute the value of H(y) inside G_k(y)
+
+            payload = 0
 
             for w in range(self.instance.l, self.instance.u + 1):
+
                 probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
-                payload += probability * self.instance.r(k, y - w)
+                payload += probability * self.r(k, y - w)
                 payload += probability * self.J(k + 1, y - w)
-            
-            payload = round(payload, 2)
 
-            # print('> Computed G_{}({}) = {}'.format(k, y, payload))
+            self.computed_H[k][y] = payload
 
-            self.computed_G[k][y] = payload
-
-        return self.computed_G[k][y]
+        return self.computed_H[k][y]
 
 
     def J(self, k, x):
@@ -61,20 +69,44 @@ class Backward:
 
         except:
 
-            min_y = x - self.instance.e
-            min_J = self.G(k, min_y) # - self.instance.t(k, x)
+            # Compute the value of J_k(x)
 
-            for y in range(x - self.instance.e + 1, self.instance.peak):
+            min_u = - self.instance.e
+            min_J = self.t(k, min_u) + self.H(k, x + min_u)
 
-                J = self.G(k, y) # - self.instance.t(k, x)
+            for u in range(- 1 * self.instance.e + 1, 2 * self.instance.peak):
 
-                if min_J > J:
-                    min_y = y
-                    min_J = J
-                    
-            # print('> Computed J_{}({})'.format(k, x))
+                j = self.t(k, u) + self.H(k, x + u)
 
-            self.computed_J[k][x] = min_J - self.instance.t(k, x)
-            self.computed_u[k][x] = min_y - x
+                if min_J > j:
+                    min_u = u
+                    min_J = j
+
+            self.computed_J[k][x] = min_J
+            self.computed_u[k][x] = min_u
 
         return self.computed_J[k][x]
+
+    def r(self, k, z):
+
+        # Compute the value of r(z)
+
+        return self.instance.p * max(0, -1 * z) + self.instance.h * max(0, z)
+
+    def t(self, k, u):
+        
+        # Compute the value of t(u)
+
+        if self.instance.modified:
+
+            if u > self.instance.frontier:
+
+                return self.instance.d * u
+
+            else:
+                
+                return self.instance.c * u
+
+        else:
+
+            return self.instance.c * u

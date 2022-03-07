@@ -4,32 +4,32 @@ class Analytical:
 
     def __init__(self, problem):
 
+        # Store instance object
         self.instance = problem
 
-        self.computed_S = {}
+        # Create memory for G, H, J, S
         self.computed_G = {}
+        self.computed_H = {}
         self.computed_J = {}
-        
+        self.computed_S = {}
+
+        # Start memory as empty        
         for k in range(0, self.instance.N):
             self.computed_G[k] = {}
+            self.computed_H[k] = {}
             self.computed_J[k] = {}
 
     def run(self):
 
+        # Run analytical form algorithm
         for k in reversed(range(0, self.instance.N)):
-
             self.S(k)
 
-        payload = ''
-
-        for k in range(0, self.instance.N):
-            payload += 'S[{}] = {}; '.format(k, self.computed_S[k])
-
-        print('Analytical form: {}'.format(payload))
-        
+        # Create optimal policy function        
         def u(k, x):
-            return max(self.computed_S[k] - x, -1 * self.instance.e)
+            return max( -1 * self.instance.e, self.computed_S[k] - x)
         
+        # Return optimal policy function
         return u
 
     def S(self, k, interval = 3):
@@ -39,12 +39,19 @@ class Analytical:
 
         except:
 
-            # Bisection method to find interval
+            # Compute the value of S_k
+            # (the minimum of G_k(y))
 
+            # Start the bisection method
+
+            # Store the lower border
             a = -self.instance.peak
+            # Store the upper border
             b = + self.instance.peak
+            # Store the middle value
             c = int(round((b + a) / 2))
 
+            # Loop until reaching interval
             while b - a > interval:
 
                 ac = mt.floor((a + c) / 2)
@@ -63,7 +70,7 @@ class Analytical:
                     b = b
                     c = cb
             
-            # Linear search over the interval
+            # Search linearly in the interval
 
             min_y = a
             min_G = self.G(k, a)
@@ -74,11 +81,30 @@ class Analytical:
                     min_y = loc_y
                     min_G = loc_G
 
-            # print('> Computed S_{} = {}'.format(k, min_y))
-
             self.computed_S[k] = min_y
 
         return self.computed_S[k]
+
+    def H(self, k, y):
+
+        try:
+            self.computed_G[k][y]
+
+        except:
+
+            # Compute the value of H(y) inside G_k(y)
+
+            payload = 0
+
+            for w in range(self.instance.l, self.instance.u + 1):
+
+                probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
+                payload += probability * self.r(k, y - w)
+                payload += probability * self.J(k + 1, y - w)
+
+            self.computed_H[k][y] = payload
+
+        return self.computed_H[k][y]
 
 
     def G(self, k, y):
@@ -88,16 +114,11 @@ class Analytical:
 
         except:
 
-            payload = self.instance.t(k, y)
+            # Compute the value of G_k(y)
 
-            for w in range(self.instance.l, self.instance.u + 1):
-                probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
-                payload += probability * self.instance.r(k, y - w)
-                payload += probability * self.J(k + 1, y - w)
-            
+            payload = self.t(k, y)
+            payload += self.H(k, y)            
             payload = round(payload, 2)
-
-            # print('> Computed G_{}({}) = {}'.format(k, y, payload))
 
             self.computed_G[k][y] = payload
 
@@ -114,13 +135,25 @@ class Analytical:
 
         except:
 
+            # Compute the value of J_k(x)
+
             payload = 0
 
             if k < self.instance.N:
-                payload = self.G(k, x + max(-1 * self.instance.e, self.computed_S[k] - x)) - self.instance.t(k, x)
-            
-            # print('> Computed J_{}({}) = {}'.format(k, x, payload))
+                payload = self.G(k, x + max(-1 * self.instance.e, self.computed_S[k] - x)) - self.t(k, x)
 
             self.computed_J[k][x] = payload
 
         return self.computed_J[k][x]
+
+    def r(self, k, z):
+
+        # Compute the value of r(z)
+
+        return self.instance.p * max(0, -1 * z) + self.instance.h * max(0, z)
+
+    def t(self, k, u):
+        
+        # Compute the value of t(u)
+
+        return self.instance.c * u
