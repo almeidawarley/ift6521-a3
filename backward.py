@@ -99,13 +99,13 @@ class Backward:
 
         if self.instance.modified:
 
-            if u > self.instance.frontier:
+            if u <= self.instance.frontier:
 
-                return self.instance.d * u
+                return self.instance.c * u
 
             else:
-                
-                return self.instance.c * u
+
+                return self.instance.d * u
 
         else:
 

@@ -33,6 +33,7 @@ class Instance:
 
         # Return instance information as string
         payload = '# -----------------------------------------------\n'
+        payload += '\tTuple: ({},{},{},{},{},{},{})\n'.format(self.N, self.l, self.u, self.c, self.p, self.h, self.e)
         payload += '\tNumber of stages (N): {}\n'.format(self.N)
         payload += '\tUniform distribution: U({}, {})\n'.format(self.l, self.u)
         payload += '\tUnit ordering costs (c): {}\n'.format(self.c)
