@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
-import random as rd
 
 class Matcher:
 
-    def __init__(self, problem, analytical, backward, seed = 100):
+    def __init__(self, problem, analytical, backward):
 
         # Store instance object
         self.instance = problem
@@ -11,9 +10,6 @@ class Matcher:
         # Store solver classes
         self.analytical_class = analytical
         self.backward_class = backward
-
-        # Set seed accordingly
-        rd.seed(seed)
 
     def build(self):
 
