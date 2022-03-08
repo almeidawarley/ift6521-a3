@@ -1,5 +1,8 @@
 # Debug files
 *.log
 
+# Graph files
+*.png
+
 # Cache files
 __pycache__/*

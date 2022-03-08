@@ -22,7 +22,7 @@ class Backward:
 
         # Run backward chaining algorithm
         for k in reversed(range(0, self.instance.N)):
-            for x in range(-1 * self.instance.peak, self.instance.peak + 1):                
+            for x in range(-1 * self.instance.peak(k), self.instance.peak(k) + 1):                
                 self.J(k, x)
 
         # Create optimal policy function
@@ -50,7 +50,7 @@ class Backward:
 
             for w in range(self.instance.l, self.instance.u + 1):
 
-                probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
+                probability  = 1 / (self.instance.u - self.instance.l + 1)
                 payload += probability * self.r(k, y - w)
                 payload += probability * self.J(k + 1, y - w)
 
@@ -74,7 +74,7 @@ class Backward:
             min_u = - self.instance.e
             min_J = self.t(k, min_u) + self.H(k, x + min_u)
 
-            for u in range(- 1 * self.instance.e + 1, 2 * self.instance.peak):
+            for u in range(- 1 * self.instance.e + 1, self.instance.peak(k) - x + 1):
 
                 j = self.t(k, u) + self.H(k, x + u)
 

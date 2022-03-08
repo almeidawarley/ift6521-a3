@@ -45,9 +45,9 @@ class Analytical:
             # Start the bisection method
 
             # Store the lower border
-            a = -self.instance.peak
+            a = -self.instance.peak(0)
             # Store the upper border
-            b = + self.instance.peak
+            b = + self.instance.peak(0)
             # Store the middle value
             c = int(round((b + a) / 2))
 
@@ -98,7 +98,7 @@ class Analytical:
 
             for w in range(self.instance.l, self.instance.u + 1):
 
-                probability  = (w - self.instance.l + 1)/(self.instance.u - self.instance.l + 1)
+                probability  = 1 / (self.instance.u - self.instance.l + 1)
                 payload += probability * self.r(k, y - w)
                 payload += probability * self.J(k + 1, y - w)
 

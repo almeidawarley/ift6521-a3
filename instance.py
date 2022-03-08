@@ -1,4 +1,4 @@
-import statistics as st
+import os
 
 class Instance:
 
@@ -18,16 +18,21 @@ class Instance:
             self.h = float(content.readline())
             self.e = int(content.readline())
 
+            # Store frontier and d for modified version
             self.modified = version
-
             if self.modified:
                 self.frontier = float(content.readline())
                 self.d = float(content.readline())
 
-        # Store reasonable inventory peak
-        self.peak = self.N * self.u
+            # Store name of the instance
+            self.name = os.path.basename(path).replace('.txt', '')
 
         print(self)
+
+    def peak(self, k):
+
+        # Compute most optimistic demand
+        return (self.N - k) * self.u
 
     def __str__(self):
 
@@ -39,8 +44,7 @@ class Instance:
         payload += '\tUnit ordering costs (c): {}\n'.format(self.c)
         payload += '\tUnit shortage costs (p): {}\n'.format(self.p)
         payload += '\tUnit storage costs (h): {}\n'.format(self.h)
-        payload += '\tReturnable units (e): {}\n'.format(self.e)
-        payload += '\tInventory peak (peak): {}\n'.format(self.peak)        
+        payload += '\tReturnable units (e): {}\n'.format(self.e)     
         if self.modified:
             payload += '\tWorking with modified version\n'
             payload += '\tFrontier for changing: {}\n'.format(self.frontier)
