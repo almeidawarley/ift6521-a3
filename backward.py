@@ -71,10 +71,10 @@ class Backward:
 
             # Compute the value of J_k(x)
 
-            min_u = - self.instance.e
+            min_u = 0
             min_J = self.t(k, min_u) + self.H(k, x + min_u)
 
-            for u in range(- 1 * self.instance.e + 1, self.instance.peak(k) - x + 1):
+            for u in range(1, self.instance.peak(k) - x + 1):
 
                 j = self.t(k, u) + self.H(k, x + u)
 

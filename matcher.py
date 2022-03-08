@@ -44,20 +44,14 @@ class Matcher:
     def draw(self, k):
 
         # Draw a scatter graph with the discretized states
-
-        xs = [x for x in range(-self.instance.peak(k) - 1, self.instance.peak(k) + 2)]
-        
+        xs = [x for x in range(-self.instance.peak(k) - 1, self.instance.peak(k) + 2)]        
         aJs = [self.analytical_solver.J(k, x) for x in xs]
         bJs = [self.backward_solver.J(k, x) for x in xs]
-
         plt.plot(xs, aJs, '--o', color = 'blue', linewidth = 2, markersize = 5, zorder = 2)
         plt.plot(xs, bJs, '-o', color = 'red', linewidth = 4, markersize = 10, zorder = 1)
-
         plt.xlabel('Inventory level x')
-        plt.ylabel('Optimal cost-to-go function J_{}(x)'.format(k))
-        
+        plt.ylabel('Optimal cost-to-go function J_{}(x)'.format(k))        
         plt.savefig('{}{}_{}.png'.format(self.instance.name, '_modified' if self.instance.modified else '', k))
-
         plt.close()
 
     def log(self, k, x):
@@ -69,3 +63,17 @@ class Matcher:
         b = self.backward_policy(k, x)
 
         print('\t[{}] Analytical policy $\mu^*_{}({}) = {}$, backward policy $\mu^*_{}({}) = {}$'.format('EQUAL' if a == b else 'DIFFERENT', k, x, a, k, x, b))
+
+    def validate(self):
+
+        if self.instance.name == 'small':
+
+            assert self.analytical_solver.J(1, 0)  == 32.5
+            assert self.analytical_solver.J(1, 1)  == 12.5
+            assert self.analytical_solver.J(1, 2)  == 5
+
+            assert self.backward_solver.J(1, 0)  == 32.5
+            assert self.backward_solver.J(1, 1)  == 12.5
+            assert self.backward_solver.J(1, 2)  == 5
+
+            print('Validated the analytical and the backward optimal policies of instance {}'.format(self.instance.name))

@@ -9,14 +9,13 @@ class Instance:
         # Open file with instance information
         with open(path) as content:
             
-            # Store N, l, u, c, p, h, e
+            # Store N, l, u, c, p, h
             self.N = int(content.readline())
             self.l = int(content.readline())
             self.u = int(content.readline())
             self.c = float(content.readline())
             self.p = float(content.readline())
             self.h = float(content.readline())
-            self.e = int(content.readline())
 
             # Store frontier and d for modified version
             self.modified = version
@@ -38,16 +37,15 @@ class Instance:
 
         # Return instance information as string
         payload = '# -----------------------------------------------\n'
-        payload += '\tTuple: ({},{},{},{},{},{},{})\n'.format(self.N, self.l, self.u, self.c, self.p, self.h, self.e)
+        payload += '\tTuple: ({},{},{},{},{},{})\n'.format(self.N, self.l, self.u, self.c, self.p, self.h)
         payload += '\tNumber of stages (N): {}\n'.format(self.N)
         payload += '\tUniform distribution: U({}, {})\n'.format(self.l, self.u)
         payload += '\tUnit ordering costs (c): {}\n'.format(self.c)
         payload += '\tUnit shortage costs (p): {}\n'.format(self.p)
         payload += '\tUnit storage costs (h): {}\n'.format(self.h)
-        payload += '\tReturnable units (e): {}\n'.format(self.e)     
         if self.modified:
             payload += '\tWorking with modified version\n'
-            payload += '\tFrontier for changing: {}\n'.format(self.frontier)
+            payload += '\tPromotional changing frontier: {}\n'.format(self.frontier)
             payload += '\tUnit ordering costs (d): {}\n'.format(self.d)
         else:
             payload += '\tWorking with standard version\n'

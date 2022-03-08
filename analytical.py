@@ -27,7 +27,7 @@ class Analytical:
 
         # Create optimal policy function        
         def u(k, x):
-            return max( -1 * self.instance.e, self.computed_S[k] - x)
+            return max(0, self.computed_S[k] - x)
         
         # Return optimal policy function
         return u
@@ -140,7 +140,7 @@ class Analytical:
             payload = 0
 
             if k < self.instance.N:
-                payload = self.G(k, x + max(-1 * self.instance.e, self.computed_S[k] - x)) - self.t(k, x)
+                payload = self.G(k, x + max(0, self.computed_S[k] - x)) - self.t(k, x)
 
             self.computed_J[k][x] = payload
 
