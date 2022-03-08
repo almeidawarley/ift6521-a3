@@ -1,8 +1,9 @@
+import matplotlib.pyplot as plt
 import random as rd
 
 class Matcher:
 
-    def __init__(self, problem, analytical, backward, evaluations, seed = 100):
+    def __init__(self, problem, analytical, backward, seed = 100):
 
         # Store instance object
         self.instance = problem
@@ -11,9 +12,6 @@ class Matcher:
         self.analytical_class = analytical
         self.backward_class = backward
 
-        # Store number of evaluations
-        self.evaluation_number = evaluations
-        
         # Set seed accordingly
         rd.seed(seed)
 
@@ -21,9 +19,13 @@ class Matcher:
 
         print('Building the matcher between analytical and backward solvers')
 
+        print('\tCreating and running the analytical solver')
+
         # Build analytical solver and compute optimal analytical policy
         self.analytical_solver = self.analytical_class(self.instance)
         self.analytical_policy = self.analytical_solver.run()
+        
+        print('\tCreating and running the backward solver')
 
         # Build backward solver and compute optimal backward policy
         self.backward_solver = self.backward_class(self.instance)
@@ -31,15 +33,32 @@ class Matcher:
 
     def run(self):
       
-        print('Comparing analytical and backward optimal policies ({} evaluations)'.format(self.evaluation_number))
+        print('Comparing analytical and backward optimal policies')
 
-        # Draw random k and x to compare optimal policy
-        evaluation_counter = 1
-        while evaluation_counter <= self.evaluation_number:
-            k = rd.choice(range(0, self.instance.N))
-            x = rd.choice(range(- self.instance.peak, self.instance.peak + 1))
-            self.log(k, x)
-            evaluation_counter = evaluation_counter + 1
+        # Parse stages k and states x and compare optimal policies
+        for k in range(0, self.instance.N):
+            for x in range(-self.instance.peak(k), self.instance.peak(k) + 1):
+                self.log(k, x)
+            self.draw(k)
+
+    def draw(self, k):
+
+        # Draw a scatter graph with the discretized states
+
+        xs = [x for x in range(-self.instance.peak(k) - 1, self.instance.peak(k) + 2)]
+        
+        aJs = [self.analytical_solver.J(k, x) for x in xs]
+        bJs = [self.backward_solver.J(k, x) for x in xs]
+
+        plt.plot(xs, aJs, '--o', color = 'blue', linewidth = 2, markersize = 5, zorder = 2)
+        plt.plot(xs, bJs, '-o', color = 'red', linewidth = 4, markersize = 10, zorder = 1)
+
+        plt.xlabel('Inventory level x')
+        plt.ylabel('Optimal cost-to-go function J_{}(x)'.format(k))
+        
+        plt.savefig('{}{}_{}.png'.format(self.instance.name, '_modified' if self.instance.modified else '', k))
+
+        plt.close()
 
     def log(self, k, x):
 
@@ -49,4 +68,4 @@ class Matcher:
         # Retrieve optimal backward policy
         b = self.backward_policy(k, x)
 
-        print('\t{} :: Analytical \mu*_{}({}) = {} units - Backward \mu*_{}({}) = {} units'.format('They are EQUAL' if a == b else 'They are DIFFERENT', k, x, a, k, x, b))
+        print('\t[{}] Analytical policy $\mu^*_{}({}) = {}$, backward policy $\mu^*_{}({}) = {}$'.format('EQUAL' if a == b else 'DIFFERENT', k, x, a, k, x, b))
