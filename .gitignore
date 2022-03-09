@@ -3,6 +3,7 @@
 
 # Graph files
 *.png
+*.svg
 
 # Cache files
 __pycache__/*

@@ -62,14 +62,34 @@ class Matcher:
 
     def validate(self):
 
-        if self.instance.name == 'small':
+        # Check if it is the correct validation instance
+        if self.instance.name == 'small' and not self.instance.modified:
 
-            assert self.analytical_solver.J(1, 0)  == 32.5
-            assert self.analytical_solver.J(1, 1)  == 12.5
-            assert self.analytical_solver.J(1, 2)  == 5
+            print('Validating the analytical and the backward policies of instance {} by hand'.format(self.instance.name))
 
-            assert self.backward_solver.J(1, 0)  == 32.5
-            assert self.backward_solver.J(1, 1)  == 12.5
-            assert self.backward_solver.J(1, 2)  == 5
+            try:
 
-            print('Validated the analytical and the backward optimal policies of instance {}'.format(self.instance.name))
+                # Check analytical solver with values calculated by hand
+                assert self.analytical_solver.J(2, 0)  == 0
+                assert self.analytical_solver.J(1, -2)  == 72.5
+                assert self.analytical_solver.J(1, -1)  == 52.5
+                assert self.analytical_solver.J(1, 0)  == 32.5
+                assert self.analytical_solver.J(1, 1)  == 12.5
+                assert self.analytical_solver.J(1, 2)  == 5
+                assert self.analytical_solver.J(1, 3)  == 15
+                assert self.analytical_solver.J(0, 0) == 67.5
+
+                # Check backward solver with values calculated by hand
+                assert self.backward_solver.J(2, 0)  == 0
+                assert self.backward_solver.J(1, -2)  == 72.5
+                assert self.backward_solver.J(1, -1)  == 52.5
+                assert self.backward_solver.J(1, 0)  == 32.5
+                assert self.backward_solver.J(1, 1)  == 12.5
+                assert self.backward_solver.J(1, 2)  == 5
+                assert self.backward_solver.J(1, 3)  == 15
+                assert self.backward_solver.J(0, 0) == 67.5
+
+                print('\tThe analytical and backward solvers MATCH the values computed by hand')
+
+            except:
+                print('\tThe analytical and backward solvers DO NOT match the values computed by hand')
