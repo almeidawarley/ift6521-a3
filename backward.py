@@ -22,7 +22,7 @@ class Backward:
 
         # Run backward chaining algorithm
         for k in reversed(range(0, self.instance.N)):
-            for x in range(-1 * self.instance.peak(k), self.instance.peak(k) + 1):                
+            for x in range(-1 * self.instance.peak(k) - (self.instance.u - self.instance.l), self.instance.peak(k) + (self.instance.u - self.instance.l) + 1 ):
                 self.J(k, x)
 
         # Create optimal policy function

@@ -9,7 +9,7 @@ class Instance:
         # Open file with instance information
         with open(path) as content:
             
-            # Store N, l, u, c, p, h
+            # Store N, l(d^-), u(d^+), c, p, h
             self.N = int(content.readline())
             self.l = int(content.readline())
             self.u = int(content.readline())

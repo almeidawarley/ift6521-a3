@@ -40,7 +40,7 @@ class Matcher:
     def draw(self, k):
 
         # Draw a scatter graph with the discretized states
-        xs = [x for x in range(-self.instance.peak(k) - 1, self.instance.peak(k) + 2)]        
+        xs = [x for x in range(-1 * self.instance.peak(k) - (self.instance.u - self.instance.l), self.instance.peak(k) + (self.instance.u - self.instance.l) + 1 )]
         aJs = [self.analytical_solver.J(k, x) for x in xs]
         bJs = [self.backward_solver.J(k, x) for x in xs]
         plt.plot(xs, aJs, '--o', color = 'blue', linewidth = 2, markersize = 5, zorder = 2)
